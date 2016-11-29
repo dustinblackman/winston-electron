@@ -11,12 +11,12 @@ npm i --save winston-electron
 ## Example
 
 ```javascript
-import electronConsole from 'winston-electron';
+import ElectronConsole from 'winston-electron';
 import winston from 'winston';
 
 const Log = new winston.Logger({
   transports: [
-    new electronConsole({
+    new ElectronConsole({
       level: 'debug',
       handleExceptions: true
     })
