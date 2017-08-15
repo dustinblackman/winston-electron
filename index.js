@@ -34,6 +34,7 @@ var Console = function (options) {
   this.align        = options.align       || false;
   this.stderrLevels = setStderrLevels(options.stderrLevels, options.debugStdout);
   this.eol          = options.eol   || os.EOL;
+  this.console      = options.console     || console;
 
   if (this.json) {
     this.stringify = options.stringify || function (obj) {
@@ -117,9 +118,9 @@ Console.prototype.log = function (level, msg, meta, callback) {
   });
 
   if (this.stderrLevels[level]) {
-    console.error(output + this.eol);
+    this.console.error(output + this.eol);
   } else {
-    console.log(output + this.eol);
+    this.console.log(output + this.eol);
   }
 
   //
