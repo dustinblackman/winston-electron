@@ -33,6 +33,8 @@ var Console = function (options) {
   this.depth        = options.depth       || null;
   this.align        = options.align       || false;
   this.stderrLevels = setStderrLevels(options.stderrLevels, options.debugStdout);
+  this.warnLevels   = setWarnLevels(options.warnLevels);
+  this.infoLevels   = setInfoLevels(options.infoLevels);
   this.eol          = options.eol   || os.EOL;
   this.console      = options.console     || console;
 
@@ -66,6 +68,30 @@ var Console = function (options) {
       return common.stringArrayToSet(['error', 'debug'], defaultMsg);
     } else if (!(Array.isArray(levels))) {
       throw new Error('Cannot set stderrLevels to type other than Array');
+    }
+
+    return common.stringArrayToSet(levels, defaultMsg);
+  };
+
+  function setWarnLevels (levels) {
+    var defaultMsg = 'Cannot have non-string elements in warnLevels Array';
+
+    if (!levels) {
+      return common.stringArrayToSet(['warn'], defaultMsg);
+    } else if (!(Array.isArray(levels))) {
+      throw new Error('Cannot set warnLevels to type other than Array');
+    }
+
+    return common.stringArrayToSet(levels, defaultMsg);
+  };
+
+  function setInfoLevels (levels) {
+    var defaultMsg = 'Cannot have non-string elements in infoLevels Array';
+
+    if (!levels) {
+      return common.stringArrayToSet(['info'], defaultMsg);
+    } else if (!(Array.isArray(levels))) {
+      throw new Error('Cannot set infoLevels to type other than Array');
     }
 
     return common.stringArrayToSet(levels, defaultMsg);
@@ -117,11 +143,17 @@ Console.prototype.log = function (level, msg, meta, callback) {
     humanReadableUnhandledException: this.humanReadableUnhandledException
   });
 
-  if (this.stderrLevels[level]) {
-    this.console.error(output + this.eol);
-  } else {
-    this.console.log(output + this.eol);
+  let func;
+  if(this.stderrLevels[level]) { // defaults: error, debug
+      func = this.console.error;
+  } else if (this.warnLevels[level]) { // defaults: warn
+      func = this.console.warn;
+  } else if (this.infoLevels[level]) { // defaults: info
+      func = this.console.info;
+  } else { // defaults: verbose
+      func = this.console.log;
   }
+  func(output + this.eol);
 
   //
   // Emit the `logged` event immediately because the event loop
