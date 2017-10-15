@@ -35,7 +35,7 @@ var Console = function (options) {
   this.stderrLevels = setStderrLevels(options.stderrLevels, options.debugStdout);
   this.warnLevels   = setWarnLevels(options.warnLevels);
   this.infoLevels   = setInfoLevels(options.infoLevels);
-  this.eol          = options.eol   || os.EOL;
+  this.eol          = options.eol   || "";
   this.console      = options.console     || console;
 
   if (this.json) {
